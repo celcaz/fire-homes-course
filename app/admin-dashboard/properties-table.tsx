@@ -1,3 +1,4 @@
+import DeleteButton from "@/components/delete-button";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -56,9 +57,7 @@ export default async function PropertiesTable({ page = 1 }: { page?: number }) {
                       </Link>
                     </Button>
                     /
-                    <Button color="red" variant="outline" size="sm">
-                      <Trash2Icon />
-                    </Button>
+                    <DeleteButton />
                   </TableCell>
                 </TableRow>
               );
