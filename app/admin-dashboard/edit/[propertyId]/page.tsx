@@ -1,6 +1,7 @@
 import { Breadcrumbs } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPropertyById } from "@/data/properties";
+import EditPropertyForm from "./edit-property-form";
 
 export default async function EditProperty({
   params,
@@ -24,7 +25,20 @@ export default async function EditProperty({
         <CardHeader>
           <CardTitle className="text-3xl font-bold">Edit Property</CardTitle>
         </CardHeader>
-        <CardContent>property form</CardContent>
+        <CardContent>
+          <EditPropertyForm
+            id={property.id}
+            address1={property.address1}
+            bathrooms={property.bathrooms}
+            bedrooms={property.bedrooms}
+            city={property.city}
+            description={property.description}
+            postcode={property.postcode}
+            price={property.price}
+            status={property.status}
+            address2={property.address2}
+          />
+        </CardContent>
       </Card>
     </div>
   );
