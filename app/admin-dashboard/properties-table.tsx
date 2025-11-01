@@ -9,12 +9,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getProperties } from "@/data/properties";
-import { PencilIcon } from "lucide-react";
+import { Trash2Icon, PencilIcon } from "lucide-react";
 import Link from "next/link";
 
 export default async function PropertiesTable({ page = 1 }: { page?: number }) {
   const { data, totalPages } = await getProperties({
-    pagination: { page, pageSize: 2 },
+    pagination: { page, pageSize: 10 },
   });
   return (
     <>
@@ -54,6 +54,10 @@ export default async function PropertiesTable({ page = 1 }: { page?: number }) {
                       <Link href={`/admin-dashboard/edit/${property.id}`}>
                         <PencilIcon />
                       </Link>
+                    </Button>
+                    /
+                    <Button color="red" variant="outline" size="sm">
+                      <Trash2Icon />
                     </Button>
                   </TableCell>
                 </TableRow>
