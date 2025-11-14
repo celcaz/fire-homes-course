@@ -12,9 +12,11 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function AuthButtons() {
   const auth = useAuth();
+  const router = useRouter();
 
   return (
     <div>
@@ -56,7 +58,12 @@ export default function AuthButtons() {
                 <Link href="/account/my-favourites">My favorites</Link>
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem onClick={async () => await auth.logout()}>
+            <DropdownMenuItem
+              onClick={async () => {
+                await auth.logout();
+                router.refresh();
+              }}
+            >
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
