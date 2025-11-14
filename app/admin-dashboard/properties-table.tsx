@@ -1,4 +1,5 @@
 import DeleteButton from "@/components/delete-button";
+import PropertyStatusBadge from "@/components/property-status-badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -10,12 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getProperties } from "@/data/properties";
-import { Trash2Icon, PencilIcon } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
+import { PencilIcon, EyeIcon } from "lucide-react";
 import Link from "next/link";
 
 export default async function PropertiesTable({ page = 1 }: { page?: number }) {
   const { data, totalPages } = await getProperties({
-    pagination: { page, pageSize: 10 },
+    pagination: { page, pageSize: 2 },
   });
   return (
     <>
@@ -47,16 +49,28 @@ export default async function PropertiesTable({ page = 1 }: { page?: number }) {
               return (
                 <TableRow key={property.id}>
                   <TableCell>{address}</TableCell>
-                  <TableCell>{property.price}</TableCell>
-                  <TableCell>{property.status}</TableCell>
                   <TableCell>
-                    view /{" "}
+                    {formatCurrency(property.price, {
+                      currency: "GBP",
+                      locale: "en-GB",
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    <PropertyStatusBadge status={property.status} />
+                  </TableCell>
+                  <TableCell className="flex justify-end gap-1">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/property/${property.id}`}>
+                        <EyeIcon />
+                      </Link>
+                    </Button>
+
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/admin-dashboard/edit/${property.id}`}>
                         <PencilIcon />
                       </Link>
                     </Button>
-                    /
+
                     <DeleteButton />
                   </TableCell>
                 </TableRow>
@@ -67,7 +81,13 @@ export default async function PropertiesTable({ page = 1 }: { page?: number }) {
             <TableRow>
               <TableCell colSpan={4} className="text-center">
                 {Array.from({ length: totalPages }).map((_, i) => (
-                  <Button key={i} asChild variant="outline" className="mx-1">
+                  <Button
+                    disabled={page === i + 1}
+                    key={i}
+                    asChild={page !== i + 1}
+                    variant="outline"
+                    className="mx-1"
+                  >
                     <Link href={`/admin-dashboard?page=${i + 1}`}>{i + 1}</Link>
                   </Button>
                 ))}
