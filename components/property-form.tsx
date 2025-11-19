@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { propertyDataSchema } from "@/validation/propertySchema";
+import { propertySchema } from "@/validation/propertySchema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,13 +17,14 @@ import { SelectValue } from "@radix-ui/react-select";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
+import MultiImageUploader, { ImageUpload } from "./multi-image-uploader";
 
-type PropertyDataForm = z.infer<typeof propertyDataSchema>;
+type PropertyDataForm = z.infer<typeof propertySchema>;
 
 type Props = {
   handleSubmit: (data: PropertyDataForm) => void;
   submitButtonLabel: React.ReactNode;
-  defaultValues?: z.infer<typeof propertyDataSchema>;
+  defaultValues?: z.infer<typeof propertySchema>;
 };
 
 export default function PropertyForm({
@@ -31,7 +32,7 @@ export default function PropertyForm({
   submitButtonLabel,
   defaultValues,
 }: Props) {
-  const combinedDefaultValues: z.infer<typeof propertyDataSchema> = {
+  const combinedDefaultValues: z.infer<typeof propertySchema> = {
     ...{
       id: 0,
       address1: "",
@@ -43,11 +44,12 @@ export default function PropertyForm({
       bedrooms: 0,
       status: "draft",
       description: "",
+      images: [],
     },
     ...defaultValues,
   };
   const form = useForm<PropertyDataForm>({
-    resolver: zodResolver(propertyDataSchema),
+    resolver: zodResolver(propertySchema),
     defaultValues: combinedDefaultValues,
   });
 
@@ -214,6 +216,24 @@ export default function PropertyForm({
             />
           </fieldset>
         </div>
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <MultiImageUploader
+                  onImagesChange={(images: ImageUpload[]) => {
+                    form.setValue("images", images);
+                  }}
+                  images={field.value}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button
           className="max-w-md mx-auto mt-2 w-full flex gap-2"
           type="submit"
