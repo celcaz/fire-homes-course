@@ -2,6 +2,10 @@
 
 import { useRef } from "react";
 import { Button } from "./ui/button";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import Image from "next/image";
+import { Badge } from "./ui/badge";
+import { MoveIcon, XIcon } from "lucide-react";
 
 export type ImageUpload = { id: string; url: string; file?: File };
 
@@ -40,9 +44,62 @@ export default function MultiImageUploader({
         accept="image/*"
         onChange={handleInputChange}
       />
-      <Button type="button" onClick={() => uploadInputRef?.current?.click()}>
+      <Button
+        className="w-full"
+        variant="outline"
+        type="button"
+        onClick={() => uploadInputRef?.current?.click()}
+      >
         Upload images
       </Button>
+
+      <DragDropContext onDragEnd={() => {}}>
+        <Droppable droppableId="property-images" direction="vertical">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {images.map((image, index) => (
+                <Draggable key={image.id} draggableId={image.id} index={index}>
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      className="relative p-2"
+                    >
+                      <div className="bg-gray-100 rounded-lg flex gap-2 items-center overflow">
+                        <div className="size-16 relative">
+                          <Image
+                            src={image.url}
+                            alt=""
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-grow ">
+                          <p className="tex-sm font-medium">
+                            image {index + 1}
+                          </p>
+                          {index === 0 && (
+                            <Badge variant="success">Featured Image</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center p-2">
+                          <button className="text-red-500 p-2">
+                            <XIcon />
+                          </button>
+                          <div className="text-gray-500">
+                            <MoveIcon />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 }
