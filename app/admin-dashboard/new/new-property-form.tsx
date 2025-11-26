@@ -3,18 +3,23 @@
 // import { createProperty } from "@/actions/property-actions";
 import PropertyForm from "@/components/property-form";
 import { useAuth } from "@/context/auth";
-import { propertyDataSchema } from "@/validation/propertySchema";
+import {
+  propertyDataSchema,
+  propertySchema,
+} from "@/validation/propertySchema";
 import { PlusCircleIcon } from "lucide-react";
 import z from "zod";
-import { createProperty } from "./actions";
+import { createProperty, savePropertyImages } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { ref, uploadBytesResumable, UploadTask } from "firebase/storage";
+import { storage } from "@/firebase/client";
 
 export default function NewPropertyForm() {
   const auth = useAuth();
   const router = useRouter();
 
-  async function handleSubmit(data: z.infer<typeof propertyDataSchema>) {
+  async function handleSubmit(data: z.infer<typeof propertySchema>) {
     // seu código aqui
 
     const token = await auth?.currentUser?.getIdToken();
@@ -22,22 +27,42 @@ export default function NewPropertyForm() {
       return;
     }
 
-    const response = await createProperty(data, token);
+    const { images, ...rest } = data;
 
-    if (!!response.error) {
+    const response = await createProperty(rest, token);
+
+    if (!!response.error || !response.propertyId) {
       toast.error("Error!", {
         description: response.error,
       });
       return;
     }
 
+    const uploadTasks: UploadTask[] = [];
+    const paths: string[] = [];
+
+    images.forEach((image, index) => {
+      if (image.file) {
+        const path = `properties/${
+          response.propertyId
+        }/${Date.now()}-${index}-${image.file.name}`;
+        paths.push(path);
+        const storageRef = ref(storage, path);
+        uploadTasks.push(uploadBytesResumable(storageRef, image.file));
+      }
+    });
+
+    await Promise.all(uploadTasks);
+    await savePropertyImages(
+      { propertyId: response.propertyId, images: paths },
+      token
+    );
+
     toast.success("Success!", {
       description: "Property created",
     });
 
     router.push("/admin-dashboard");
-
-    console.log("Data -->", { response });
   }
   return (
     <div>
