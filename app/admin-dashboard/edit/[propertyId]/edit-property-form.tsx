@@ -23,6 +23,7 @@ export default function EditPropertyForm({
   price,
   status,
   address2,
+  images = [],
 }: Props) {
   const router = useRouter();
 
@@ -65,6 +66,10 @@ export default function EditPropertyForm({
           price,
           status,
           address2,
+          images: images.map((image) => ({
+            id: image,
+            url: image,
+          })),
         }}
       />
     </div>

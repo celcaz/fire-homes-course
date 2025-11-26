@@ -37,6 +37,7 @@ export default async function EditProperty({
             price={property.price}
             status={property.status}
             address2={property.address2}
+            images={property.images || []}
           />
         </CardContent>
       </Card>
