@@ -1,9 +1,18 @@
 import PropertyStatusBadge from "@/components/property-status-badge";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { getPropertyById } from "@/data/properties";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowLeftIcon, BathIcon, BedIcon } from "lucide-react";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
+import BackButton from "./back-button";
 
 export default async function Property({ params }: { params: Promise<any> }) {
   const paramsValue = await params;
@@ -19,11 +28,34 @@ export default async function Property({ params }: { params: Promise<any> }) {
   return (
     <div className="grid grid-cols-[1fr_500px]">
       <div>
-        carousel
+        {!!property.images && (
+          <Carousel className="w-full">
+            <CarouselContent>
+              {property.images?.map((image, index) => (
+                <CarouselItem key={image}>
+                  <div className="h-[80vh] min-h-80 relative">
+                    <Image
+                      src={`https://firebasestorage.googleapis.com/v0/b/fire-homes-course-8ca3a.firebasestorage.app/o/${encodeURIComponent(
+                        image
+                      )}?alt=media`}
+                      alt={`Image ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {property.images.length > 1 && (
+              <>
+                <CarouselPrevious className="translate-x-24 size-12" />
+                <CarouselNext className="-translate-x-24 size-12" />
+              </>
+            )}
+          </Carousel>
+        )}
         <div className="property-description max-w-screen-md mx-auto py-10 px-4">
-          <Button>
-            <ArrowLeftIcon /> Back
-          </Button>
+          <BackButton />
           <ReactMarkdown>{property.description}</ReactMarkdown>
         </div>
       </div>
