@@ -1,5 +1,4 @@
 import PropertyStatusBadge from "@/components/property-status-badge";
-import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -9,7 +8,7 @@ import {
 } from "@/components/ui/carousel";
 import { getPropertyById } from "@/data/properties";
 import { formatCurrency } from "@/lib/utils";
-import { ArrowLeftIcon, BathIcon, BedIcon } from "lucide-react";
+import { BathIcon, BedIcon } from "lucide-react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import BackButton from "./back-button";
@@ -17,7 +16,6 @@ import BackButton from "./back-button";
 export default async function Property({ params }: { params: Promise<any> }) {
   const paramsValue = await params;
   const property = await getPropertyById(paramsValue.propertyId);
-  console.log("teste", { property });
 
   const addressLines = [
     property.address1,
