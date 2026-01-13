@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -54,6 +60,7 @@ export default function FiltersForm() {
           name="minPrice"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Min price</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -70,6 +77,7 @@ export default function FiltersForm() {
           name="maxPrice"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Max price</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -86,6 +94,7 @@ export default function FiltersForm() {
           name="minBedrooms"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Min bedrooms</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -97,7 +106,9 @@ export default function FiltersForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Search</Button>
+        <Button className="mt-auto" type="submit">
+          Search
+        </Button>
       </form>
     </Form>
   );

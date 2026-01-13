@@ -14,12 +14,12 @@ export default async function PropertySearch({
 }: {
   searchParams: Promise<any>;
 }) {
-  const searchParamsValue = await searchParams;
+  const searchParamsValues = await searchParams;
 
-  const parsedPage = parseInt(searchParamsValue?.page);
-  const parsedMinPrice = parseInt(searchParamsValue?.minPrice);
-  const parsedMaxPrice = parseInt(searchParamsValue?.maxPrice);
-  const parsedMinBedrooms = parseInt(searchParamsValue?.minBedrooms);
+  const parsedPage = parseInt(searchParamsValues?.page);
+  const parsedMinPrice = parseInt(searchParamsValues?.minPrice);
+  const parsedMaxPrice = parseInt(searchParamsValues?.maxPrice);
+  const parsedMinBedrooms = parseInt(searchParamsValues?.minBedrooms);
 
   const page = isNaN(parsedPage) ? 1 : parsedPage;
   const minPrice = isNaN(parsedMinPrice) ? null : parsedMinPrice;
@@ -27,7 +27,7 @@ export default async function PropertySearch({
   const minBedrooms = isNaN(parsedMinBedrooms) ? null : parsedMinBedrooms;
 
   const { data, totalPages } = await getProperties({
-    pagination: { page, pageSize: 6 },
+    pagination: { page, pageSize: 3 },
     filters: {
       minBedrooms,
       maxPrice,
@@ -35,7 +35,6 @@ export default async function PropertySearch({
       status: ["sale"],
     },
   });
-  console.log({ data });
   return (
     <div className="max-w-screen-md mx-auto">
       <h1 className="text-4xl font-bold p-5">Property Search</h1>
@@ -95,6 +94,32 @@ export default async function PropertySearch({
                 </div>
               </CardContent>
             </Card>
+          );
+        })}
+      </div>
+      <div className="flex gap-2 items-center justify-center py-10">
+        {Array.from({ length: totalPages }).map((_, i) => {
+          const newSearchParams = new URLSearchParams();
+          if (searchParamsValues?.minBedrooms) {
+            newSearchParams.set("minBedrooms", searchParamsValues.minBedrooms);
+          }
+          if (searchParamsValues?.minPrice) {
+            newSearchParams.set("minPrice", searchParamsValues.minPrice);
+          }
+          if (searchParamsValues?.maxPrice) {
+            newSearchParams.set("maxPrice", searchParamsValues.maxPrice);
+          }
+
+          newSearchParams.set("page", `${i + 1}`);
+          return (
+            <Button
+              variant="outline"
+              key={i}
+              asChild={page !== i + 1}
+              disabled={page === i + 1}
+            >
+              <Link href={`/property-search?${newSearchParams}`}>{i + 1}</Link>
+            </Button>
           );
         })}
       </div>
