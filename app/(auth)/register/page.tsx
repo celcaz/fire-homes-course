@@ -1,5 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import RegisterForm from "./register-form";
+import Link from "next/link";
 
 export default function Register() {
   return (
@@ -10,6 +17,12 @@ export default function Register() {
       <CardContent>
         <RegisterForm />
       </CardContent>
+      <CardFooter>
+        Already have an account?
+        <Link href="/login" className="underline pl-2">
+          Log in here.
+        </Link>
+      </CardFooter>
     </Card>
   );
 }
