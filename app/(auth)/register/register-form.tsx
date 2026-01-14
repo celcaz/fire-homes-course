@@ -11,39 +11,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { registerUserSchema } from "@/validation/registerUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-
-const formSchema = z
-  .object({
-    email: z.email(),
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    password: z.string().refine(
-      (value) => {
-        const regex =
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-        return regex.test(value);
-      },
-      {
-        message:
-          "Password must contain at least 6 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character",
-      }
-    ),
-    passwordConfirm: z.string(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.passwordConfirm)
-      ctx.addIssue({
-        message: "Password do not match",
-        path: ["passwordConfirm"],
-        code: "custom",
-      });
-  });
+import { registerUser } from "./actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof registerUserSchema>>({
+    resolver: zodResolver(registerUserSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -51,7 +31,24 @@ export default function RegisterForm() {
       name: "",
     },
   });
-  const handleSubmit = async (data: z.infer<typeof formSchema>) => {};
+
+  const handleSubmit = async (data: z.infer<typeof registerUserSchema>) => {
+    const response = await registerUser(data);
+
+    if (response?.error) {
+      toast.error("Error!", {
+        description: response.message,
+      });
+      return;
+    }
+
+    toast.success("Success!", {
+      description: "Your account was created successfully",
+    });
+
+    router.push("/login");
+  };
+
   return (
     <Form {...form}>
       <form
